@@ -9,7 +9,7 @@ public class CLIApp {
 
     public static void main(String[] args) {
         System.out.println("RPN calculator started, input \"clear\" to start over, " +
-                "input \"undo\" to go back to the previous step input \"exit\" to exit");
+                "input \"undo\" to go back to the previous step, input \"exit\" to exit");
         looping();
     }
 

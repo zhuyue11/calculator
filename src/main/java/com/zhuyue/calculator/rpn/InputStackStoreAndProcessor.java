@@ -135,14 +135,18 @@ public class InputStackStoreAndProcessor {
     }
 
     public void undo() {
+        String operator = null;
         if (!operatorReverseStack.isEmpty()) {
-            operatorStack.push(operatorReverseStack.pop());
+            operator = operatorReverseStack.pop();
         }
 
         if (!numberStack.isEmpty()) {
             numberStack.pop();
             if (!numberReverseStack.isEmpty()) {
                 numberStack.push(numberReverseStack.pop());
+                if (operator != null && InputValidator.isDoubleNumberOperator(operator)) {
+                    numberStack.push(numberReverseStack.pop());
+                }
             }
         }
         printStack();
