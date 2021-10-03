@@ -1,0 +1,9 @@
+# Java class files
+target/
+
+# IntelliJ configuration
+.idea
+*.iml
+
+# Mac OSX folder attribute files
+.DS_Store
