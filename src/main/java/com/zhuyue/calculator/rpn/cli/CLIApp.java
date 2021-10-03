@@ -5,7 +5,7 @@ import com.zhuyue.calculator.rpn.InputStackStoreAndProcessor;
 public class CLIApp {
 
     private static final InputStackStoreAndProcessor inputStackStoreAndProcessor =
-            new InputStackStoreAndProcessor(new CLIErrorMessageHandler());
+            new InputStackStoreAndProcessor(new CLIMessageHandler());
 
     public static void main(String[] args) {
         System.out.println("RPN calculator started, input \"clear\" to start over, " +

@@ -3,26 +3,26 @@ package com.zhuyue.calculator.rpn;
 import com.zhuyue.calculator.CalculatorFunction;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
 public class InputStackStoreAndProcessor {
 
     private static final String INPUT_ITEM_SEPARATOR = " ";
-    private final Deque<Double> numberStack;
+    private final Deque<BigDecimal> numberStack;
     private final Deque<String> operatorStack;
-    private final Deque<Double> numberReverseStack;
+    private final Deque<BigDecimal> numberReverseStack;
     private final Deque<String> operatorReverseStack;
-    private final ErrorMessageHandler errorMessageHandler;
+    private final MessageHandler messageHandler;
 
-    public InputStackStoreAndProcessor(ErrorMessageHandler errorMessageHandler) {
+    public InputStackStoreAndProcessor(MessageHandler messageHandler) {
         this.numberStack = new ArrayDeque<>();
         this.operatorStack = new ArrayDeque<>();
         this.numberReverseStack = new ArrayDeque<>();
         this.operatorReverseStack = new ArrayDeque<>();
-        this.errorMessageHandler = errorMessageHandler;
+        this.messageHandler = messageHandler;
     }
 
     public void storeAndCalculate(String input) {
@@ -38,9 +38,9 @@ public class InputStackStoreAndProcessor {
             if (InputValidator.isOperator(item)) {
                 ifNeedToCalculate |= storeOperator(item, i);
             } else {
-                var number = InputValidator.strToDouble(item);
+                var number = InputValidator.strToBigDecimal(item);
                 if (number == null) {
-                    errorMessageHandler.handleFormatErrorMessage(i);
+                    messageHandler.handleFormatErrorMessage(i);
                 } else {
                     numberStack.push(number);
                 }
@@ -51,15 +51,15 @@ public class InputStackStoreAndProcessor {
             calculate();
         }
 
-        printStack();
+        messageHandler.printRPNStack(numberStack);
     }
 
     private void calculate() {
         var operator = operatorStack.pop();
         operatorReverseStack.push(operator);
-        double result;
-        double numberTwo;
-        Double numberOne = null;
+        BigDecimal result;
+        BigDecimal numberTwo;
+        BigDecimal numberOne = null;
         switch (operator) {
             case "+":
                 numberTwo = numberStack.pop();
@@ -107,7 +107,7 @@ public class InputStackStoreAndProcessor {
         if (ifEnoughNumberToOperate) {
             operatorStack.push(item);
         } else {
-            errorMessageHandler.handleOperatorErrorMessage(itemIndex, item);
+            messageHandler.handleOperatorErrorMessage(itemIndex, item);
         }
 
         return ifEnoughNumberToOperate;
@@ -150,33 +150,10 @@ public class InputStackStoreAndProcessor {
                 }
             }
         }
-        printStack();
+        messageHandler.printRPNStack(numberStack);
     }
 
-    private void printStack() {
-        Iterator<Double> it = numberStack.descendingIterator();
-        while(it.hasNext()) {
-            System.out.print(formatDouble(it.next()) + " ");
-        }
-        System.out.println();
-    }
-
-    private static String formatDouble(Double number) {
-        var doubleStr = String.format("%.10f", number);
-        var intAndDecimal = doubleStr.split("\\.");
-        var decimalCharArray = intAndDecimal[1].toCharArray();
-        while (decimalCharArray.length > 0) {
-            if (decimalCharArray[decimalCharArray.length - 1] == '0') {
-                decimalCharArray = Arrays.copyOf(decimalCharArray, decimalCharArray.length - 1);
-            } else {
-                break;
-            }
-        }
-
-        if (decimalCharArray.length == 0) {
-            return intAndDecimal[0];
-        } else {
-            return intAndDecimal[0] + "." + String.valueOf(decimalCharArray);
-        }
+    public Deque<BigDecimal> getNumberStack() {
+        return numberStack;
     }
 }
