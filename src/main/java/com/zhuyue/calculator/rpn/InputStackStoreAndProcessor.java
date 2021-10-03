@@ -4,6 +4,7 @@ import com.zhuyue.calculator.CalculatorFunction;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -152,11 +153,30 @@ public class InputStackStoreAndProcessor {
         printStack();
     }
 
-    public void printStack() {
+    private void printStack() {
         Iterator<Double> it = numberStack.descendingIterator();
         while(it.hasNext()) {
-            System.out.print(it.next() + " ");
+            System.out.print(formatDouble(it.next()) + " ");
         }
         System.out.println();
+    }
+
+    private static String formatDouble(Double number) {
+        var doubleStr = String.format("%.10f", number);
+        var intAndDecimal = doubleStr.split("\\.");
+        var decimalCharArray = intAndDecimal[1].toCharArray();
+        while (decimalCharArray.length > 0) {
+            if (decimalCharArray[decimalCharArray.length - 1] == '0') {
+                decimalCharArray = Arrays.copyOf(decimalCharArray, decimalCharArray.length - 1);
+            } else {
+                break;
+            }
+        }
+
+        if (decimalCharArray.length == 0) {
+            return intAndDecimal[0];
+        } else {
+            return intAndDecimal[0] + "." + String.valueOf(decimalCharArray);
+        }
     }
 }
