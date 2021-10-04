@@ -85,31 +85,27 @@ public class InputStackStoreAndProcessor {
         BigDecimal result;
         BigDecimal numberTwo;
         BigDecimal numberOne = null;
-        switch (operator) {
-            case "+":
-                numberTwo = numberStack.pop();
-                numberOne = numberStack.pop();
-                result = CalculatorFunction.plus(numberOne, numberTwo);
-                break;
-            case "-":
-                numberTwo = numberStack.pop();
-                numberOne = numberStack.pop();
-                result = CalculatorFunction.subtract(numberOne, numberTwo);
-                break;
-            case "*":
-                numberTwo = numberStack.pop();
-                numberOne = numberStack.pop();
-                result = CalculatorFunction.multiply(numberOne, numberTwo);
-                break;
-            case "/":
-                numberTwo = numberStack.pop();
-                numberOne = numberStack.pop();
-                result = CalculatorFunction.divide(numberOne, numberTwo);
-                break;
-            default:
-                numberTwo = numberStack.pop();
-                result = CalculatorFunction.sqrt(numberTwo);
-                break;
+
+        if (InputValidator.isSingleNumberOperator(operator)) {
+            numberTwo = numberStack.pop();
+            result = CalculatorFunction.sqrt(numberTwo);
+        } else {
+            numberTwo = numberStack.pop();
+            numberOne = numberStack.pop();
+            switch (operator) {
+                case "+":
+                    result = CalculatorFunction.plus(numberOne, numberTwo);
+                    break;
+                case "-":
+                    result = CalculatorFunction.subtract(numberOne, numberTwo);
+                    break;
+                case "*":
+                    result = CalculatorFunction.multiply(numberOne, numberTwo);
+                    break;
+                default:
+                    result = CalculatorFunction.divide(numberOne, numberTwo);
+                    break;
+            }
         }
 
         numberReverseStack.push(numberTwo);
