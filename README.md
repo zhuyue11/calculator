@@ -12,8 +12,9 @@ How does it work?
 ---
 When the application has started, you can enter numbers and operators separated by space like</br>
 <code>1 2 +</code></br>
-The calculator will calculate. Then it will print all the all un-operated numbers in input order. As an example, 
-after the last operation <code>1 2 +</code>, it will print <code>3</code></br>
+The calculator will calculate. Then put the result back for further calculation. 
+Then it will print all the all un-operated numbers in input order. As an example, 
+after the input <code>1 2 + 5 6</code>, it will print <code>3 5 6</code></br>
 
 How to run the application
 ---
