@@ -179,14 +179,10 @@ public class InputStackStoreAndProcessor {
         } else {
             int undoIndex = undoSizeStack.pop();
             var index = numberStack.size() - undoIndex;
-            numberStack.add(index, numberReverseStack.pop());
+            numberStack.set(index, numberReverseStack.pop());
             if (InputValidator.isDoubleNumberOperator(operator)) {
                 numberStack.add(index, numberReverseStack.pop());
-                index += 2;
-            } else {
-                index ++;
             }
-            numberStack.remove(index);
         }
         messageHandler.printRPNStack(numberStack);
     }
