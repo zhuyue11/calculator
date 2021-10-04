@@ -20,5 +20,5 @@ How to run the application
 <b>Package</b> mvn -B clean package</br>
 <b>Run</b> </br>
 Run for linux/MacOs <code>sh run.sh</code> </br>
-Run for Window <code>bash run.sh</code> </br>
+Run for Window <code>bash run.sh</code> (not tested, I don't have a Windows machine)</br>
 or <code>java -jar target/calculator.jar</code>
