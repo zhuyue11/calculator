@@ -25,6 +25,12 @@ public class InputStackStoreAndProcessor {
         this.messageHandler = messageHandler;
     }
 
+    /**
+     * Parse the input and push the numbers to the number stack and the operators
+     * to the operator stack. After that doing the calculation if necessary
+     *
+     * @param input string contains rpn calculator input {@code String}.
+     */
     public void storeAndCalculate(String input) {
         if (StringUtils.isBlank(input)) {
             return;
@@ -54,6 +60,10 @@ public class InputStackStoreAndProcessor {
         messageHandler.printRPNStack(numberStack);
     }
 
+    /**
+     * Pop up the operators one by one and doing the calculation, until the operator
+     * stack is empty
+     */
     private void calculate() {
         var operator = operatorStack.pop();
         operatorReverseStack.push(operator);
@@ -98,6 +108,13 @@ public class InputStackStoreAndProcessor {
         }
     }
 
+    /**
+     * Check if the item is valid to be stored in the stack.
+     * If not, use <code>messageHandler</code> to produce the message
+     *
+     * @param item it is a number or an operator {@code String}.
+     * @param itemIndex the index of the item from the input {@code int}.
+     */
     private boolean storeOperator(String item, int itemIndex) {
         var allocatedNumberAmount = getAllocatedNumberAmount();
 
@@ -113,6 +130,9 @@ public class InputStackStoreAndProcessor {
         return ifEnoughNumberToOperate;
     }
 
+    /**
+     * Use the operator stack to calculate how many numbers are allocated by the operators already
+     */
     private int getAllocatedNumberAmount() {
         Iterator<String> it = operatorStack.descendingIterator();
         var allocatedNumberAmount = 0;
@@ -127,6 +147,10 @@ public class InputStackStoreAndProcessor {
         return allocatedNumberAmount;
     }
 
+    /**
+     * Clear the 4 internal stacks, which store the number to be operated, the operators
+     * and the stacks used to do undo operation
+     */
     public void clear() {
         numberStack.clear();
         operatorStack.clear();
@@ -135,6 +159,9 @@ public class InputStackStoreAndProcessor {
         System.out.println("Stack cleared");
     }
 
+    /**
+     * Revert the number stack to the previous status, discard the latest operator
+     */
     public void undo() {
         String operator = null;
         if (!operatorReverseStack.isEmpty()) {
@@ -153,6 +180,9 @@ public class InputStackStoreAndProcessor {
         messageHandler.printRPNStack(numberStack);
     }
 
+    /**
+     * Return current number stack
+     */
     public Deque<BigDecimal> getNumberStack() {
         return numberStack;
     }
