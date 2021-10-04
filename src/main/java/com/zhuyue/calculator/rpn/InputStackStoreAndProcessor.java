@@ -16,14 +16,14 @@ public class InputStackStoreAndProcessor {
     private final LinkedList<BigDecimal> numberStack;
     private final Deque<BigDecimal> numberReverseStack;
     private final Deque<String> operatorReverseStack;
-    private final Deque<Integer> undoIndexStack;
+    private final Deque<Integer> undoSizeStack;
     private final MessageHandler messageHandler;
 
     public InputStackStoreAndProcessor(MessageHandler messageHandler) {
         this.numberStack = new LinkedList<>();
         this.numberReverseStack = new ArrayDeque<>();
         this.operatorReverseStack = new ArrayDeque<>();
-        this.undoIndexStack = new ArrayDeque<>();
+        this.undoSizeStack = new ArrayDeque<>();
         this.messageHandler = messageHandler;
     }
 
@@ -134,7 +134,7 @@ public class InputStackStoreAndProcessor {
         if (ifEnoughNumberToOperate) {
             calculate(operator);
             operatorReverseStack.push(operator);
-            setUndoIndex();
+            setUndoSize();
         } else {
             messageHandler.handleOperatorErrorMessage(itemIndex, operator);
         }
@@ -145,10 +145,8 @@ public class InputStackStoreAndProcessor {
     /**
      * Set undoIndex after operation
      */
-    private void setUndoIndex() {
-        var undoIndex = numberStack.size();
-        undoIndexStack.push(undoIndex);
-        System.out.println(undoIndexStack);
+    private void setUndoSize() {
+        undoSizeStack.push(numberStack.size());
     }
 
     /**
@@ -178,7 +176,7 @@ public class InputStackStoreAndProcessor {
                 System.out.println("Nothing to undo!");
             }
         } else {
-            int undoIndex = undoIndexStack.pop();
+            int undoIndex = undoSizeStack.pop();
             var index = numberStack.size() - undoIndex;
             numberStack.add(index, numberReverseStack.pop());
             if (InputValidator.isDoubleNumberOperator(operator)) {
