@@ -182,8 +182,10 @@ public class InputStackStoreAndProcessor {
             numberStack.add(index, numberReverseStack.pop());
             if (InputValidator.isDoubleNumberOperator(operator)) {
                 numberStack.add(index, numberReverseStack.pop());
+                index += 2;
+            } else {
+                index ++;
             }
-            index += 2;
             numberStack.remove(index);
         }
         messageHandler.printRPNStack(numberStack);
