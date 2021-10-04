@@ -77,8 +77,9 @@ public class InputStackStoreAndProcessor {
     }
 
     /**
-     * Pop up the operators one by one and doing the calculation, until the operator
-     * stack is empty
+     * Use the input operator to decide how many numbers to pop up, then do the calculation
+     *
+     * @param operator the value is an operator {@code String}.
      */
     private void calculate(String operator) {
         operatorReverseStack.push(operator);
