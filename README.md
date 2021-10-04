@@ -18,4 +18,7 @@ The calculator will calculate. Then it will print all the all un-operated number
 How to run the application
 ---
 <b>Package</b> mvn -B clean package</br>
-<b>Run</b> run <code>run.sh</code> or <code>java -jar target/calculator.jar</code>
+<b>Run</b> </br>
+Run for linux/MacOs <code>sh run.sh</code> </br>
+Run for Window <code>bash run.sh</code> </br>
+or <code>java -jar target/calculator.jar</code>
