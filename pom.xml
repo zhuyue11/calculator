@@ -55,6 +55,8 @@
                 <configuration>
                     <archive>
                         <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>com.zhuyue.calculator.rpn.cli.CLIApp</mainClass>
                         </manifest>
                     </archive>
