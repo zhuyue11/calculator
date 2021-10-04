@@ -8,7 +8,7 @@ public class CLIApp {
             new InputStackStoreAndProcessor(new CLIMessageHandler());
 
     public static void main(String[] args) {
-        System.out.println("RPN calculator started, input \"clear\" to start over, " +
+        System.console().writer().println("RPN calculator started, input \"clear\" to start over, " +
                 "input \"undo\" to undo an operation, input \"exit\" to exit");
         looping();
     }
@@ -17,7 +17,7 @@ public class CLIApp {
         var input = CLIInputReceiver.receiveInput();
         switch (input) {
             case "exit":
-                System.out.println("Exiting calculator......");
+                System.console().writer().println("Exiting calculator......");
                 break;
             case "clear":
                 inputStackStoreAndProcessor.clear();

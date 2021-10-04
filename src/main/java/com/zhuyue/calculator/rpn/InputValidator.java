@@ -8,7 +8,7 @@ public class InputValidator {
 
     private static final List<String> VALID_SINGLE_NUMBER_OPERATORS = List.of("sqrt");
     private static final List<String> VALID_DOUBLE_NUMBER_OPERATORS = List.of("+", "-", "*", "/");
-    private static int DECIMAL_SCALE = 15;
+    private static final int DECIMAL_SCALE = 15;
 
     private InputValidator() {}
 

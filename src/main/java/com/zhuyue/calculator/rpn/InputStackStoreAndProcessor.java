@@ -157,7 +157,8 @@ public class InputStackStoreAndProcessor {
         numberStack.clear();
         numberReverseStack.clear();
         operatorReverseStack.clear();
-        System.out.println("Stack cleared");
+        undoSizeStack.clear();
+        System.console().writer().println("Stack cleared");
     }
 
     /**
@@ -173,7 +174,7 @@ public class InputStackStoreAndProcessor {
             if (!numberStack.isEmpty()) {
                 numberStack.pop();
             } else {
-                System.out.println("Nothing to undo!");
+                System.console().writer().println("Nothing to undo!");
             }
         } else {
             int undoIndex = undoSizeStack.pop();
