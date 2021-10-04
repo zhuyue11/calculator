@@ -5,23 +5,25 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
-import java.util.Iterator;
+import java.util.LinkedList;
 
 public class InputStackStoreAndProcessor {
 
     private static final String INPUT_ITEM_SEPARATOR = " ";
-    private final Deque<BigDecimal> numberStack;
-    private final Deque<String> operatorStack;
+    private final LinkedList<BigDecimal> numberStack;
     private final Deque<BigDecimal> numberReverseStack;
     private final Deque<String> operatorReverseStack;
+    private final Deque<Integer> undoIndexStack;
     private final MessageHandler messageHandler;
 
     public InputStackStoreAndProcessor(MessageHandler messageHandler) {
-        this.numberStack = new ArrayDeque<>();
-        this.operatorStack = new ArrayDeque<>();
+        this.numberStack = new LinkedList<>();
         this.numberReverseStack = new ArrayDeque<>();
         this.operatorReverseStack = new ArrayDeque<>();
+        this.undoIndexStack = new ArrayDeque<>();
         this.messageHandler = messageHandler;
     }
 
@@ -31,41 +33,54 @@ public class InputStackStoreAndProcessor {
      *
      * @param input string contains rpn calculator input {@code String}.
      */
-    public void storeAndCalculate(String input) {
+    public void calculateAndStore(String input) {
         if (StringUtils.isBlank(input)) {
             return;
         }
 
-        var ifNeedToCalculate = false;
-        var items = input.split(INPUT_ITEM_SEPARATOR);
+        var items = getInputItems(input);
 
         for (var i = 0; i < items.length; i++) {
+            var failToProcess = false;
             var item = items[i];
             if (InputValidator.isOperator(item)) {
-                ifNeedToCalculate |= storeOperator(item, i);
+                var calculated = checkOperatorAndCalculate(item, i);
+                failToProcess = !calculated;
             } else {
                 var number = InputValidator.strToBigDecimal(item);
                 if (number == null) {
                     messageHandler.handleFormatErrorMessage(i);
+                    failToProcess = true;
                 } else {
                     numberStack.push(number);
                 }
             }
-        }
 
-        if (ifNeedToCalculate) {
-            calculate();
+            if (failToProcess) {
+                break;
+            }
         }
 
         messageHandler.printRPNStack(numberStack);
     }
 
     /**
+     * remove empty items from input and get items
+     *
+     * @return {@code items from input}
+     */
+    private String[] getInputItems(String input) {
+        var items = input.split(INPUT_ITEM_SEPARATOR);
+        var itemList = new ArrayList<>(Arrays.asList(items));
+        itemList.removeIf(s -> s.length() == 0);
+        return itemList.toArray(new String[0]);
+    }
+
+    /**
      * Pop up the operators one by one and doing the calculation, until the operator
      * stack is empty
      */
-    private void calculate() {
-        var operator = operatorStack.pop();
+    private void calculate(String operator) {
         operatorReverseStack.push(operator);
         BigDecimal result;
         BigDecimal numberTwo;
@@ -102,49 +117,38 @@ public class InputStackStoreAndProcessor {
             numberReverseStack.push(numberOne);
         }
         numberStack.push(result);
-
-        if (!operatorStack.isEmpty()) {
-            calculate();
-        }
     }
 
     /**
      * Check if the item is valid to be stored in the stack.
      * If not, use <code>messageHandler</code> to produce the message
      *
-     * @param item it is a number or an operator {@code String}.
+     * @param operator it is an operator {@code String}.
      * @param itemIndex the index of the item from the input {@code int}.
      */
-    private boolean storeOperator(String item, int itemIndex) {
-        var allocatedNumberAmount = getAllocatedNumberAmount();
+    private boolean checkOperatorAndCalculate(String operator, int itemIndex) {
 
-        var ifEnoughNumberToOperate = (InputValidator.isSingleNumberOperator(item)
-                && numberStack.size() - allocatedNumberAmount > 0)
-                || (InputValidator.isDoubleNumberOperator(item) && numberStack.size() - allocatedNumberAmount > 1);
+        var ifEnoughNumberToOperate = (InputValidator.isSingleNumberOperator(operator)
+                && !numberStack.isEmpty())
+                || (InputValidator.isDoubleNumberOperator(operator) && numberStack.size() > 1);
         if (ifEnoughNumberToOperate) {
-            operatorStack.push(item);
+            calculate(operator);
+            operatorReverseStack.push(operator);
+            setUndoIndex();
         } else {
-            messageHandler.handleOperatorErrorMessage(itemIndex, item);
+            messageHandler.handleOperatorErrorMessage(itemIndex, operator);
         }
 
         return ifEnoughNumberToOperate;
     }
 
     /**
-     * Use the operator stack to calculate how many numbers are allocated by the operators already
+     * Set undoIndex after operation
      */
-    private int getAllocatedNumberAmount() {
-        Iterator<String> it = operatorStack.descendingIterator();
-        var allocatedNumberAmount = 0;
-        while(it.hasNext()) {
-            var operator = it.next();
-            if (InputValidator.isSingleNumberOperator(operator)) {
-                allocatedNumberAmount++;
-            } else {
-                allocatedNumberAmount += 2;
-            }
-        }
-        return allocatedNumberAmount;
+    private void setUndoIndex() {
+        var undoIndex = numberStack.size();
+        undoIndexStack.push(undoIndex);
+        System.out.println(undoIndexStack);
     }
 
     /**
@@ -153,7 +157,6 @@ public class InputStackStoreAndProcessor {
      */
     public void clear() {
         numberStack.clear();
-        operatorStack.clear();
         numberReverseStack.clear();
         operatorReverseStack.clear();
         System.out.println("Stack cleared");
@@ -168,14 +171,21 @@ public class InputStackStoreAndProcessor {
             operator = operatorReverseStack.pop();
         }
 
-        if (!numberStack.isEmpty()) {
-            numberStack.pop();
-            if (!numberReverseStack.isEmpty()) {
-                numberStack.push(numberReverseStack.pop());
-                if (operator != null && InputValidator.isDoubleNumberOperator(operator)) {
-                    numberStack.push(numberReverseStack.pop());
-                }
+        if (numberReverseStack.isEmpty()) {
+            if (!numberStack.isEmpty()) {
+                numberStack.pop();
+            } else {
+                System.out.println("Nothing to undo!");
             }
+        } else {
+            int undoIndex = undoIndexStack.pop();
+            var index = numberStack.size() - undoIndex;
+            numberStack.add(index, numberReverseStack.pop());
+            if (InputValidator.isDoubleNumberOperator(operator)) {
+                numberStack.add(index, numberReverseStack.pop());
+            }
+            index += 2;
+            numberStack.remove(index);
         }
         messageHandler.printRPNStack(numberStack);
     }

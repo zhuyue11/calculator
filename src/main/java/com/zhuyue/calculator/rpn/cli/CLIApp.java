@@ -28,7 +28,7 @@ public class CLIApp {
                 looping();
                 break;
             default:
-                inputStackStoreAndProcessor.storeAndCalculate(input);
+                inputStackStoreAndProcessor.calculateAndStore(input);
                 looping();
                 break;
         }
