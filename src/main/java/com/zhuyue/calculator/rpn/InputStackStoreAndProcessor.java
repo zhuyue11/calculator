@@ -133,7 +133,6 @@ public class InputStackStoreAndProcessor {
                 || (InputValidator.isDoubleNumberOperator(operator) && numberStack.size() > 1);
         if (ifEnoughNumberToOperate) {
             calculate(operator);
-            operatorReverseStack.push(operator);
             setUndoSize();
         } else {
             messageHandler.handleOperatorErrorMessage(itemIndex, operator);
@@ -165,11 +164,6 @@ public class InputStackStoreAndProcessor {
      * Revert the number stack to the previous status, discard the latest operator
      */
     public void undo() {
-        String operator = null;
-        if (!operatorReverseStack.isEmpty()) {
-            operator = operatorReverseStack.pop();
-        }
-
         if (numberReverseStack.isEmpty()) {
             if (!numberStack.isEmpty()) {
                 numberStack.pop();
@@ -180,7 +174,7 @@ public class InputStackStoreAndProcessor {
             int undoIndex = undoSizeStack.pop();
             var index = numberStack.size() - undoIndex;
             numberStack.set(index, numberReverseStack.pop());
-            if (InputValidator.isDoubleNumberOperator(operator)) {
+            if (InputValidator.isDoubleNumberOperator(operatorReverseStack.pop())) {
                 numberStack.add(index, numberReverseStack.pop());
             }
         }
