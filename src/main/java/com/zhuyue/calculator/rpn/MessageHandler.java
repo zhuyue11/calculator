@@ -12,6 +12,10 @@ public abstract class MessageHandler {
 
     public abstract void printRPNStack(Deque<BigDecimal> stack);
 
+    protected static void handleDivideZeroErrorMessage() {
+        System.console().writer().println("Can't divide zero!");
+    }
+
     protected static String formatBigDecimal(BigDecimal number) {
         var doubleStr = String.format("%.10f", number);
         var intAndDecimal = doubleStr.split("\\.");

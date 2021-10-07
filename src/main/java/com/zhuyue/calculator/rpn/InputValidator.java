@@ -31,4 +31,8 @@ public class InputValidator {
             return null;
         }
     }
+
+    public static boolean divideZeroCheck(String operator, BigDecimal denominator) {
+        return operator.equals("/") && denominator.compareTo(BigDecimal.ZERO) == 0;
+    }
 }

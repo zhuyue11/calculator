@@ -125,17 +125,21 @@ public class InputStackStoreAndProcessor {
      */
     private boolean checkOperatorAndCalculate(String operator, int itemIndex) {
 
-        var ifEnoughNumberToOperate = (InputValidator.isSingleNumberOperator(operator)
+        var ifOperate = (InputValidator.isSingleNumberOperator(operator)
                 && !numberStack.isEmpty())
                 || (InputValidator.isDoubleNumberOperator(operator) && numberStack.size() > 1);
-        if (ifEnoughNumberToOperate) {
+        if (InputValidator.divideZeroCheck(operator, numberStack.peekFirst())) {
+            messageHandler.handleDivideZeroErrorMessage();
+            return false;
+        }
+        if (ifOperate) {
             calculate(operator);
             setUndoSize();
         } else {
             messageHandler.handleOperatorErrorMessage(itemIndex, operator);
         }
 
-        return ifEnoughNumberToOperate;
+        return ifOperate;
     }
 
     /**
